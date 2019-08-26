@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import logging, sys, datetime, jinja2, cairosvg
+import logging, sys, datetime, jinja2, cairosvg, textwrap
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
         CallbackQueryHandler, ConversationHandler, InlineQueryHandler, ChosenInlineResultHandler)
 from telegram import InlineQueryResultArticle, ParseMode, InputTextMessageContent, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
@@ -12,17 +12,11 @@ def karto_bildo_response(teksto, is_verda=True):
     print("a-1")
     bildo, fontkoloro = ["../kartoj_kontraux_esperantujo/img/verdaj_kartoj.png", "#008000"] if is_verda else \
                         ["../kartoj_kontraux_esperantujo/img/rugaj_kartoj.png", "#ce181e"]
-    print("a", teksto, is_verda, bildo, fontkoloro)
     template_str = open("kartoj_kontraux_esperantujo/templates/sxablono_karto.svg.jinja2").read()
-    print("a1")
     t = jinja2.Template(template_str)
-    print("a2")
-    r = t.render(k={"teksto":teksto}, piedbildo=bildo, fontkoloro=fontkoloro)
-    print("a3")
+    r = t.render(k={"teksto": textwrap.wrap(teksto, 20)}, piedbildo=bildo, fontkoloro=fontkoloro)
     open('tmp/temp.svg', "w").write(r)
-    print("a4")
     cairosvg.svg2png(url='tmp/temp.svg', write_to='tmp/temp.png')
-    print("a5")
 
 def aldonu_karton(bot, update):
     updict = update.to_dict()
@@ -71,15 +65,13 @@ def aldonu_karton(bot, update):
       rugxa_karto=rugxa_karto, rugxa_duvorta_karto=rugxa_duvorta_karto,
       rugxa_trivorta_karto=rugxa_trivorta_karto, verda_karto=verda_karto
     )
-    print("db added", command, rugxa_karto, rugxa_duvorta_karto, rugxa_trivorta_karto, verda_karto)
-    bot.send_photo(update.message.chat.id, photo=open("tmp/temp.png", 'rb'))
     karto_bildo_response(message, verda_karto)
+    bot.send_photo(update.message.chat.id, photo=open("tmp/temp.png", 'rb'))
     response = "g_nomo: {grupnomo}, uzanto_nomo={uzanto_nomo}, r_karto={rugxa_karto}," + \
                "r_duvorta_karto={rugxa_duvorta_karto}, r_trivorta_karto={rugxa_trivorta_karto}," + \
                "v_karto={verda_karto}".format(
                         grupnomo=grupnomo, uzanto_nomo=uzanto_nomo, rugxa_karto=rugxa_karto, rugxa_duvorta_karto=rugxa_duvorta_karto, rugxa_trivorta_karto=rugxa_trivorta_karto, verda_karto=verda_karto
                   )
-    print("fff added")
     update.message.reply_text(response, parse_mode = ParseMode.MARKDOWN)
 
 def error(bot, update, error):
