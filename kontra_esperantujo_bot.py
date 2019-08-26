@@ -47,17 +47,20 @@ def aldonu_karton(bot, update):
         verda_karto = True
 
     brecxoj = message.split().count("*")
-    common = 'Via volis aldoni ruĝan karton kun unu breĉoj, sed nur indikis {} breĉo(j)n...\n'.format(brecxoj) + \
+    common = 'Via volis aldoni ruĝan karton kun {} breĉoj,' + \
+             ' sed nur indikis {} breĉo(j)n...\n'.format(brecxoj) + \
              "Mi ne akceptos tiun karton, bvle korektu..."
     if rugxa_karto and brecxoj != 1:
-        update.message.reply_text(common)
+        update.message.reply_text(common.format(1))
         return
     elif rugxa_duvorta_karto and brecxoj != 2:
-        update.message.reply_text(common)
+        update.message.reply_text(common.format(2))
         return
     elif rugxa_trivorta_karto and brecxoj != 3:
-        update.message.reply_text(common)
+        update.message.reply_text(common.format(3))
         return
+    if not verda_karto:
+        message = message.replace("*", "_______")
 
     aldonu_karton_al_db(
       teksto = message, grupnomo = grupnomo, uzanto_nomo=uzanto_nomo,
@@ -67,11 +70,7 @@ def aldonu_karton(bot, update):
     )
     karto_bildo_response(message, verda_karto)
     bot.send_photo(update.message.chat.id, photo=open("tmp/temp.png", 'rb'))
-    response = "g_nomo: {grupnomo}, uzanto_nomo={uzanto_nomo}, r_karto={rugxa_karto}," + \
-               "r_duvorta_karto={rugxa_duvorta_karto}, r_trivorta_karto={rugxa_trivorta_karto}," + \
-               "v_karto={verda_karto}".format(
-                        grupnomo=grupnomo, uzanto_nomo=uzanto_nomo, rugxa_karto=rugxa_karto, rugxa_duvorta_karto=rugxa_duvorta_karto, rugxa_trivorta_karto=rugxa_trivorta_karto, verda_karto=verda_karto
-                  )
+    response = "Aldonis la karto al la datumbazo."
     update.message.reply_text(response, parse_mode = ParseMode.MARKDOWN)
 
 def error(bot, update, error):
