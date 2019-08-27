@@ -14,9 +14,6 @@ Krei novajn kartojn por la ludo [kartoj kontraŭ esperantujo](https://lakt.uk/bu
 * aldonu_verda - Aldonu verdan karton
 * elsxutu_kartaron - Elŝutu la kompleta kartaro en la datumbazo
 * kiu_kontribuis - Diras al vi kies kartojn vi povas elŝuti
-
-### Ankoraŭ ne funkcias...
-
 * elsxutu_kartaron_de_uzantoj - Elŝutu kartaro de la listitaj uzantoj
 
 ## Ekzemplo

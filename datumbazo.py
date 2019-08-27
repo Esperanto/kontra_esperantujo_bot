@@ -41,13 +41,7 @@ def aldonu_karton_al_db(
     ))
     session.commit()
 
-def cxiujn_kartojn():
-    return session.query(Karto).all()
-
-def cxiujn_kartojn_por_printado():
-    verdaj = session.query(Karto).filter((Karto.verda_karto==1)).all()
-    rugxaj = session.query(Karto).filter((Karto.verda_karto!=1) | (Karto.verda_karto==None)).all()
-
+def printebligi(rugxaj, verdaj):
     return {
              "verdaj": {
                    "bildo": "../img/verdaj_kartoj.png",
@@ -62,6 +56,19 @@ def cxiujn_kartojn_por_printado():
                  "kartoj": [{"teksto":str(v.teksto)} for v in rugxaj]
             }
         }
+
+def cxiujn_kartojn():
+    return session.query(Karto).all()
+
+def cxiujn_kartojn_por_printado_de_uzantoj(uzantoj=[]):
+    verdaj = [v for v in session.query(Karto).filter((Karto.verda_karto==1)).all() if v.uzanto_nomo in uzantoj]
+    rugxaj = [r for r in session.query(Karto).filter((Karto.verda_karto!=1) | (Karto.verda_karto==None)).all()  if r.uzanto_nomo in uzantoj]
+    return printebligi(rugxaj, verdaj)
+
+def cxiujn_kartojn_por_printado():
+    verdaj = session.query(Karto).filter((Karto.verda_karto==1)).all()
+    rugxaj = session.query(Karto).filter((Karto.verda_karto!=1) | (Karto.verda_karto==None)).all()
+    return printebligi(rugxaj, verdaj)
 
 def sercxu_kartojn_de(grupoj=[], uzantoj=[]):
     pass

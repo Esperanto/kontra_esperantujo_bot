@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import logging, sys, datetime, jinja2, cairosvg, textwrap
+import logging, sys, datetime, jinja2, cairosvg, textwrap, os
 from kartoj_kontraux_esperantujo.generate import generate_kartaro
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
         CallbackQueryHandler, ConversationHandler, InlineQueryHandler, ChosenInlineResultHandler)
@@ -18,6 +18,29 @@ def karto_bildo_response(teksto, is_verda=True):
     open('tmp/temp.svg', "w").write(r)
     cairosvg.svg2png(url='tmp/temp.svg', write_to='tmp/temp.png')
 
+def elsxutu_kartaron_de_uzantoj(bot, update):
+    # forigi antauxajn dosierujojn
+    d = [f for f in os.listdir("kartoj_kontraux_esperantujo/svg/") if ".svg" in f]
+    for f in d: os.remove("kartoj_kontraux_esperantujo/svg/"+f)
+    d = [f for f in os.listdir("kartoj_kontraux_esperantujo/img/") if "rugxa" in f or ("verda" in f and not "verdaj" in f)]
+    for f in d: os.remove("kartoj_kontraux_esperantujo/img/"+f)
+    # cxu sen teksto
+    if len(update.message.text.split(" ")) >= 2:
+        command, message = update.message.text.split(" ", 1)
+    else:
+        update.message.reply_text("Bonvole ne listo de homoj, kies kartojn vi volas printi ;) (ekz. '\\elsxutu_kartaron_de_uzantoj timsk, potwal, zam')")
+        return
+    print("a")
+    uzantoj = [u.strip() for u in message.split(",")]
+    print("b")
+    kartaro = cxiujn_kartojn_por_printado_de_uzantoj(uzantoj)
+    print("c")
+    update.message.reply_text("Ĥo, tio iome daŭros... Atendu...")
+    generate_kartaro(kartaro, "kartoj_kontraux_esperantujo/")
+    bot.send_document(update.message.chat.id, open("rugxa_kartaro.pdf", 'rb'))
+    bot.send_document(update.message.chat.id, open("verda_kartaro.pdf", 'rb'))
+    update.message.reply_text("Bonvole ;)")
+
 def elsxutu_kartaron(bot, update):
     kartaro = cxiujn_kartojn_por_printado()
     update.message.reply_text("Ĥo, tio iome daŭros... Atendu...")
@@ -28,7 +51,6 @@ def elsxutu_kartaron(bot, update):
 
 def kiu_kontribuis(bot, update):
     kontribuantoj = set([k.uzanto_nomo for k in cxiujn_kartojn()])
-    print("a")
     respondo = "Jen la origina traduko ĉi tie https://lakt.uk/butiko/kartoj-kontrau-esperantujo/ estas de timsk.\n"
     respondo2 = "Plu kontribuis kartojn en tio servilo jenaj personoj (elŝutu pere de 'elsxutu_kartaron' a ekzemple 'elsxutu_kartaron_de_uzantoj timsk, kontibuanto2, [...]'):\n\n* " + \
         "\n *".join(kontribuantoj)
@@ -121,7 +143,7 @@ def main():
     dp.add_handler(CommandHandler("aldonu_rugxa_trivorta", aldonu_karton))
     dp.add_handler(CommandHandler("aldonu_verda", aldonu_karton))
     dp.add_handler(CommandHandler("elsxutu_kartaron", elsxutu_kartaron))
-    dp.add_handler(CommandHandler("elsxutu_kartaron_de_uzantoj", elsxutu_kartaron))
+    dp.add_handler(CommandHandler("elsxutu_kartaron_de_uzantoj", elsxutu_kartaron_de_uzantoj))
     dp.add_handler(CommandHandler("kiu_kontribuis", kiu_kontribuis))
 
     # log all errors
