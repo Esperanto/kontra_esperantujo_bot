@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging, sys, datetime, jinja2, cairosvg, textwrap
+from kartoj_kontraux_esperantujo.generate import generate_kartaro
 from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, RegexHandler,
         CallbackQueryHandler, ConversationHandler, InlineQueryHandler, ChosenInlineResultHandler)
 from telegram import InlineQueryResultArticle, ParseMode, InputTextMessageContent, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
@@ -17,6 +18,23 @@ def karto_bildo_response(teksto, is_verda=True):
     r = t.render(k={"teksto": textwrap.wrap(teksto, 20)}, piedbildo=bildo, fontkoloro=fontkoloro)
     open('tmp/temp.svg', "w").write(r)
     cairosvg.svg2png(url='tmp/temp.svg', write_to='tmp/temp.png')
+
+def elsxutu_kartaron(bot, update):
+    kartaro = cxiujn_kartojn_por_printado()
+    print("haka")
+    generate_kartaro(kartaro)
+    print("proka")
+
+def kiu_kontribuis(bot, update):
+    kontribuantoj = set([k.uzanto_nomo for k in cxiujn_kartojn()])
+    print("a")
+    respondo = "Jen la origina traduko ĉi tie https://lakt.uk/butiko/kartoj-kontrau-esperantujo/ estas de timsk.\n"
+    respondo2 = "Plu kontribuis kartojn en tio servilo jenaj personoj (elŝutu pere de 'elsxutu_kartaron' a ekzemple 'elsxutu_kartaron_de_uzantoj timsk, kontibuanto2, [...]'):\n\n* " + \
+        "\n *".join(kontribuantoj)
+    print("a")
+    update.message.reply_text(respondo)
+    update.message.reply_text(respondo2)
+    print("a")
 
 def aldonu_karton(bot, update):
     updict = update.to_dict()
@@ -59,6 +77,9 @@ def aldonu_karton(bot, update):
     elif rugxa_trivorta_karto and brecxoj != 3:
         update.message.reply_text(common.format(3))
         return
+    if message.strip() == "":
+        update.message.reply_text("Bonvole ne forgesu la tekston de la karto ;)")
+        return
     if not verda_karto:
         message = message.replace("*", "_______")
 
@@ -87,6 +108,9 @@ def main():
     dp.add_handler(CommandHandler("aldonu_rugxa_duvorta", aldonu_karton))
     dp.add_handler(CommandHandler("aldonu_rugxa_trivorta", aldonu_karton))
     dp.add_handler(CommandHandler("aldonu_verda", aldonu_karton))
+    dp.add_handler(CommandHandler("elsxutu_kartaron", elsxutu_kartaron))
+    dp.add_handler(CommandHandler("elsxutu_kartaron_de_uzantoj", elsxutu_kartaron))
+    dp.add_handler(CommandHandler("kiu_kontribuis", kiu_kontribuis))
 
     # log all errors
     dp.add_error_handler(error)
