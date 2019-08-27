@@ -10,7 +10,6 @@ from telegram.utils.helpers import escape_markdown
 from datumbazo import *
 
 def karto_bildo_response(teksto, is_verda=True):
-    print("a-1")
     bildo, fontkoloro = ["../kartoj_kontraux_esperantujo/img/verdaj_kartoj.png", "#008000"] if is_verda else \
                         ["../kartoj_kontraux_esperantujo/img/rugaj_kartoj.png", "#ce181e"]
     template_str = open("kartoj_kontraux_esperantujo/templates/sxablono_karto.svg.jinja2").read()
@@ -41,9 +40,11 @@ def aldonu_karton(bot, update):
     print("bot=",bot,"\n\n")
     print("update=",updict,"\n\n")
 
+    # de privata aux grupa konservacio
     private = updict["message"]["chat"]["type"] == "private" # else it's a group
     grupnomo = "private" if private else updict["message"]["chat"]["title"]
 
+    # uzantnomo
     uzanto_nomo = ""
     if "username" in updict["message"]["from"]:
         uzanto_nomo = updict["message"]["from"]["username"]
@@ -53,7 +54,14 @@ def aldonu_karton(bot, update):
         if 'last_name'  in updict["message"]["from"]:
             uzanto_nomo += updict["message"]["from"]['last_name']
 
-    command, message = updict["message"]["text"].split(" ", 1)
+    # cxu sen teksto
+    if len(updict["message"]["text"].split(" ")) >= 2:
+        command, message = updict["message"]["text"].split(" ", 1)
+    else:
+        update.message.reply_text("Bonvole ne forgesu la tekston de la karto ;)")
+        return
+
+    # tipo de karto
     rugxa_karto, rugxa_duvorta_karto, rugxa_trivorta_karto, verda_karto = 4*[False]
     if "rugxa_trivorta" in command:
         rugxa_trivorta_karto = True
@@ -64,6 +72,7 @@ def aldonu_karton(bot, update):
     else: # "verda" in command:
         verda_karto = True
 
+    # cxu suficxe da brecxoj
     brecxoj = message.split().count("*")
     common = 'Via volis aldoni ruĝan karton kun {} breĉoj,' + \
              ' sed nur indikis {} breĉo(j)n...\n'.format(brecxoj) + \
@@ -77,15 +86,15 @@ def aldonu_karton(bot, update):
     elif rugxa_trivorta_karto and brecxoj != 3:
         update.message.reply_text(common.format(3))
         return
-    if message.strip() == "":
-        update.message.reply_text("Bonvole ne forgesu la tekston de la karto ;)")
-        return
+
+    # x- h- sistemo
     message = message.replace("gx","ĝ").replace("cx","ĉ").replace("gh","ĝ").replace("ch","ĉ") \
                      .replace("hx","ĥ").replace("ux","ŭ").replace("hh","ĥ").replace("uh","ŭ") \
                      .replace("jx","ĵ").replace("sx","ŝ").replace("jh","ĵ").replace("sh","ŝ")
     if not verda_karto:
         message = message.replace("*", "_______")
 
+    # konservu karton kaj respondu
     aldonu_karton_al_db(
       teksto = message, grupnomo = grupnomo, uzanto_nomo=uzanto_nomo,
       uzanto_id=updict["message"]["from"]["id"], chat_id=updict["message"]["chat"]["id"],
