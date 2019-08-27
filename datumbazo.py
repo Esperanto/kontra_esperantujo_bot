@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sqlalchemy, datetime, json, requests, os, yaml
+import sqlalchemy, datetime, json, requests, os, yaml, html
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Boolean, Column, Integer, DateTime, String, Text, Float, ForeignKey, JSON
@@ -40,6 +40,28 @@ def aldonu_karton_al_db(
         rugxa_trivorta_karto = rugxa_trivorta_karto, aldonita = datetime.datetime.now()
     ))
     session.commit()
+
+def cxiujn_kartojn():
+    return session.query(Karto).all()
+
+def cxiujn_kartojn_por_printado():
+    verdaj = session.query(Karto).filter((Karto.verda_karto==1)).all()
+    rugxaj = session.query(Karto).filter((Karto.verda_karto!=1) | (Karto.verda_karto==None)).all()
+
+    return {
+             "verdaj": {
+                   "bildo": "../img/verdaj_kartoj.png",
+                   "fontkoloro": "#008000",
+                   "antauxpado": "verda",
+                   "kartoj": [{"teksto":str(v.teksto)} for v in verdaj]
+              },
+            "rugxaj": {
+                 "bildo": "../img/rugaj_kartoj.png",
+                 "fontkoloro": "#ce181e",
+                 "antauxpado": "rugxa",
+                 "kartoj": [{"teksto":str(v.teksto)} for v in rugxaj]
+            }
+        }
 
 def sercxu_kartojn_de(grupoj=[], uzantoj=[]):
     pass
