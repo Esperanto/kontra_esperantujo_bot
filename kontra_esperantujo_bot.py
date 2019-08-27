@@ -80,6 +80,9 @@ def aldonu_karton(bot, update):
     if message.strip() == "":
         update.message.reply_text("Bonvole ne forgesu la tekston de la karto ;)")
         return
+    message = message.replace("gx","ĝ").replace("cx","ĉ").replace("gh","ĝ").replace("ch","ĉ") \
+                     .replace("hx","ĥ").replace("ux","ŭ").replace("hh","ĥ").replace("uh","ŭ") \
+                     .replace("jx","ĵ").replace("sx","ŝ").replace("jh","ĵ").replace("sh","ŝ")
     if not verda_karto:
         message = message.replace("*", "_______")
 
