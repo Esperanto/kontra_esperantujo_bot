@@ -51,11 +51,11 @@ def elsxutu_kartaron(bot, update):
 
 def kiu_kontribuis(bot, update):
     kontribuantoj = set([k.uzanto_nomo for k in cxiujn_kartojn()])
-    respondo = "Jen la origina traduko ĉi tie https://lakt.uk/butiko/kartoj-kontrau-esperantujo/ estas de timsk.\n"
-    respondo2 = "Plu kontribuis kartojn en tio servilo jenaj personoj (elŝutu pere de 'elsxutu_kartaron' a ekzemple 'elsxutu_kartaron_de_uzantoj timsk, kontibuanto2, [...]'):\n\n* " + \
-        "\n *".join(kontribuantoj)
-    update.message.reply_text(respondo)
-    update.message.reply_text(respondo2)
+    respondo = "Jen la origina traduko [ĉi tie](https://lakt.uk/butiko/kartoj-kontrau-esperantujo/). Ĝi estas de timsk.\n"
+    respondo2 = "Plu kontribuis kartojn en tio servilo jenaj personoj (elŝutu pere de 'elsxutu_kartaron' a ekzemple 'elsxutu_kartaron_de_uzantoj timsk, kontibuanto2, [...]'):\n\n+ " + \
+        "\n+ ".join(kontribuantoj)
+    update.message.reply_text(respondo, parse_mode = ParseMode.MARKDOWN)
+    update.message.reply_text(respondo2, parse_mode = ParseMode.MARKDOWN)
 
 def aldonu_karton(bot, update):
     updict = update.to_dict()
