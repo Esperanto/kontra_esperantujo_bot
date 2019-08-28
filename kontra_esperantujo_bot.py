@@ -112,7 +112,10 @@ def aldonu_karton(bot, update):
     # x- h- sistemo
     message = message.replace("gx","ĝ").replace("cx","ĉ").replace("gh","ĝ").replace("ch","ĉ") \
                      .replace("hx","ĥ").replace("ux","ŭ").replace("hh","ĥ").replace("uh","ŭ") \
-                     .replace("jx","ĵ").replace("sx","ŝ").replace("jh","ĵ").replace("sh","ŝ")
+                     .replace("jx","ĵ").replace("sx","ŝ").replace("jh","ĵ").replace("sh","ŝ") \
+                     .replace("Cx","Ĉ").replace("Gh","Ĝ").replace("Ch","Ĉ").replace("Gx","Ĝ") \
+                     .replace("Hx","Ĥ").replace("Ux","Ŭ").replace("Hh","Ĥ").replace("Uh","Ŭ") \
+                     .replace("Jx","Ĵ").replace("Sx","Ŝ").replace("Jh","Ĵ").replace("Sh","Ŝ")
     if not verda_karto:
         message = message.replace("*", "_______")
 
